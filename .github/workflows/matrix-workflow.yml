@@ -1,0 +1,13 @@
+---
+on:
+  workflow_call:
+
+jobs:
+  job:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        version: ${{ fromJson(inputs.versions) }}
+    steps:
+      - uses: actions/checkout@v3
+      - run: 'echo "You are on branch: $(git branch)" with version:  ${{ matrix.version }}'
