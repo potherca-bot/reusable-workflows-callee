@@ -1,7 +1,11 @@
 ---
 on:
   workflow_call:
-
+    inputs:
+      versions:
+        description: Stringified JSON object listing target versions
+        required: true
+        type: string
 jobs:
   job:
     runs-on: ubuntu-latest
