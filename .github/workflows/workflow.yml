@@ -8,4 +8,4 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - run: 'echo "You are on branch: $(git branch)"'
-      - run: echo "::set-output name=time::$(date)"
+      
