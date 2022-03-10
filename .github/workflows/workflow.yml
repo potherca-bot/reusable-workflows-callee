@@ -1,0 +1,11 @@
+---
+on:
+  workflow_call:
+
+jobs:
+  job:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - run: "You are on: $(git branch)"
+      - run: echo "::set-output name=time::$(date)"
