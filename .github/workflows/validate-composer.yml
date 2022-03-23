@@ -36,8 +36,9 @@ concurrency:
 jobs:
   validate-composer:
     env:
-      ACTION_COMMAND: composer validate
-    runs-on: ubuntu-latest
+      ACTION_COMMAND: composer validate --working-dir ${{ inputs.directory }}
+    name: "Validate composer.json file"
+    runs-on: ubuntu-20.04
     steps:
       - if: ${{ ! inputs.check-lock }}
         name: --no-check-lock
@@ -51,6 +52,7 @@ jobs:
         name: --strict
         run: echo "ACTION_COMMAND=${{ env.ACTION_COMMAND }} --strict" >> $GITHUB_ENV
 
+      # - uses: actions/checkout@v3
       - run: echo "{}" > composer.json
 
       - name: ${{ env.ACTION_COMMAND }}
