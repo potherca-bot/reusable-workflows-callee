@@ -32,24 +32,24 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Set the value
-        run: echo "ACTION_COMMAND='composer validate'" >> $GITHUB_ENV
-
-      - run: echo -e "${ACTION_COMMAND}\n${{ env.ACTION_COMMAND }}"
+        run: echo "ACTION_COMMAND=composer validate" >> $GITHUB_ENV
 
       - if: ${{ ! inputs.check-lock }}
         name: --no-check-lock
-        run: echo "ACTION_COMMAND='${{ env.ACTION_COMMAND }} --no-check-lock'" >> $GITHUB_ENV
-
-      - run: echo -e "${ACTION_COMMAND}\n${{ env.ACTION_COMMAND }}"
+        run: echo "ACTION_COMMAND=${{ env.ACTION_COMMAND }} --no-check-lock" >> $GITHUB_ENV
 
       - if: ${{ ! inputs.strict }}
         name: --strict
-        run: echo "ACTION_COMMAND='${{ env.ACTION_COMMAND }} --strict'" >> $GITHUB_ENV
+        run: echo "ACTION_COMMAND=${{ env.ACTION_COMMAND }} --strict" >> $GITHUB_ENV
 
       - run: echo -e "${ACTION_COMMAND}\n${{ env.ACTION_COMMAND }}"
 
-      - run: echo '{}' > composer.json
+      - run: echo "{}" > composer.json
 
       - uses: "docker://composer"
         with:
           args: ${{ env.ACTION_COMMAND }}
+
+      - uses: "docker://composer"
+        with:
+          args: ${ACTION_COMMAND}
