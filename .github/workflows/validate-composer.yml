@@ -1,0 +1,49 @@
+---
+on:
+  workflow_call:
+    inputs:
+      # inputs.check-lock: true
+      check-lock:
+        default: true
+        description: 'Boolean: To check composer.lock file'
+        required: false
+        type: boolean
+      # inputs.directory: .
+      directory:
+        default: .
+        description: 'String: Directory where composer.json is located'
+        required: false
+        type: string
+      # inputs.strict: false
+      strict:
+        default: false
+        description: 'Boolean: Return a non-zero exit code for warnings as well as errors'
+        required: false
+        type: boolean
+
+# Cancels all previous workflow runs for the same branch that have not yet completed.
+concurrency:
+  # The concurrency group contains the workflow name and the branch name.
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate-composer:
+    env:
+      ACTION_COMMAND: 'composer validate'
+    runs-on: ubuntu-latest
+    steps:
+      - if: ${{ ! inputs.check-lock }}
+        run: ACTION_COMMAND="${ACTION_COMMAND} --no-check-lock"
+
+      - if: ${{ ! inputs.strict }}
+        run: ACTION_COMMAND="${ACTION_COMMAND} --strict"
+
+      #- uses: actions/checkout@v3
+      - run: echo '{}' > composer.json
+
+      - run: echo "${ACTION_COMMAND}"
+
+      - uses: "docker://composer"
+        with:
+          args: ${{ env.ACTION_COMMAND }}
