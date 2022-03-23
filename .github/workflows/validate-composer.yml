@@ -47,7 +47,7 @@ jobs:
         name: --no-check-publish
         run: echo "ACTION_COMMAND=${{ env.ACTION_COMMAND }} --no-check-publish" >> $GITHUB_ENV
 
-      - if: ${{ ! inputs.strict }}
+      - if: ${{ inputs.strict }}
         name: --strict
         run: echo "ACTION_COMMAND=${{ env.ACTION_COMMAND }} --strict" >> $GITHUB_ENV
 
