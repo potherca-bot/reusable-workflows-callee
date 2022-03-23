@@ -29,11 +29,10 @@ concurrency:
 
 jobs:
   validate-composer:
+    env:
+      ACTION_COMMAND: composer validate
     runs-on: ubuntu-latest
     steps:
-      - name: Set the value
-        run: echo "ACTION_COMMAND=composer validate" >> $GITHUB_ENV
-
       - if: ${{ ! inputs.check-lock }}
         name: --no-check-lock
         run: echo "ACTION_COMMAND=${{ env.ACTION_COMMAND }} --no-check-lock" >> $GITHUB_ENV
