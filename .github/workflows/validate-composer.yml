@@ -5,7 +5,13 @@ on:
       # inputs.check-lock: true
       check-lock:
         default: true
-        description: 'Boolean: To check composer.lock file'
+        description: 'Boolean: Whether to check composer.lock file or not'
+        required: false
+        type: boolean
+      # inputs.check-publish: true
+      check-publish:
+        default: true
+        description: 'Boolean: Whether to check for publish errors or not'
         required: false
         type: boolean
       # inputs.directory: .
@@ -37,18 +43,17 @@ jobs:
         name: --no-check-lock
         run: echo "ACTION_COMMAND=${{ env.ACTION_COMMAND }} --no-check-lock" >> $GITHUB_ENV
 
+      - if: ${{ ! inputs.check-publish }}
+        name: --no-check-publish
+        run: echo "ACTION_COMMAND=${{ env.ACTION_COMMAND }} --no-check-publish" >> $GITHUB_ENV
+
       - if: ${{ ! inputs.strict }}
         name: --strict
         run: echo "ACTION_COMMAND=${{ env.ACTION_COMMAND }} --strict" >> $GITHUB_ENV
 
-      - run: echo -e "${ACTION_COMMAND}\n${{ env.ACTION_COMMAND }}"
-
       - run: echo "{}" > composer.json
 
-      - uses: "docker://composer"
+      - name: ${{ env.ACTION_COMMAND }}
+        uses: "docker://composer"
         with:
           args: ${{ env.ACTION_COMMAND }}
-
-      - uses: "docker://composer"
-        with:
-          args: ${ACTION_COMMAND}
