@@ -29,20 +29,28 @@ concurrency:
 
 jobs:
   validate-composer:
-    env:
-      ACTION_COMMAND: 'composer validate'
     runs-on: ubuntu-latest
     steps:
+      - name: Set the value
+        run: echo "ACTION_COMMAND='composer validate'" >> $GITHUB_ENV
+
+      - name: Append a value
+
+      - name: Use the value
+        run: echo "${{ env.ACTION_COMMAND }}"
+
       - if: ${{ ! inputs.check-lock }}
-        run: ACTION_COMMAND="${ACTION_COMMAND} --no-check-lock"
+        name: --no-check-lock
+        run: echo "ACTION_COMMAND='${{ env.ACTION_COMMAND }} --no-check-lock'" >> $GITHUB_ENV
 
       - if: ${{ ! inputs.strict }}
-        run: ACTION_COMMAND="${ACTION_COMMAND} --strict"
+        name: --strict
+        run: echo "ACTION_COMMAND='${{ env.ACTION_COMMAND }} --strict'" >> $GITHUB_ENV
 
       #- uses: actions/checkout@v3
       - run: echo '{}' > composer.json
 
-      - run: echo "${ACTION_COMMAND}"
+      - run: echo -e "${ACTION_COMMAND}\n${{ env.ACTION_COMMAND }}"
 
       - uses: "docker://composer"
         with:
