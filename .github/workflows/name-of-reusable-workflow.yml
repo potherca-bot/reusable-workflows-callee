@@ -1,0 +1,25 @@
+---
+on:
+  workflow_call:
+
+jobs:
+  warn-user:
+    name: "Please select an existing reusable workflow name!"
+    runs-on: ubuntu-20.04
+    steps:
+      - run: |
+          sworkflows="$( \
+            sDir='available-workflows'; \
+            sRepo='https://github.com/potherca-bot/reusable-workflows-callee.git'; \
+            git clone --quiet "${sRepo}" "${sDir}"; \
+            ls "${sDir}/.github/workflows/" \
+              | grep -v 'name-of-reusable-workflow' \
+              | tr ' ' '\n'
+          )"
+          cat << EOF
+          Please select an existing reusable workflow name
+          
+          The following reusable workflows are available:
+          
+          ${sworkflows}
+          EOF
