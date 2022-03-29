@@ -1,0 +1,37 @@
+---
+on:
+  workflow_call:
+    inputs:
+      # inputs.files: "**/*.sh"
+      files:
+        default: \**/*.sh
+        description: 'String: Files to lint'
+        required: false
+        type: string
+      # inputs.format: gcc
+      format:
+        default: gcc
+        description: 'String: output format to use (checkstyle, diff, gcc, json, json1, quiet, tty)'
+        required: false
+        type: string
+
+jobs:
+  lint-shell:
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v3
+
+      # Grab default config if local config does not exist
+      # ShellCheck will look for `.shellcheckrc` and `shellcheckrc`
+      # Check if file exists
+      - if: hashFiles( '.shellcheckrc', 'shellcheckrc' ) == ''
+        name: Fetch default config
+        run: wget https://raw.githubusercontent.com/potherca-bot/reusable-workflows-callee/main/config/shellcheckrc -O '.shellcheckrc'
+
+      - name: Lint shell files
+        env:
+          PIPELINECOMPONENTS_GLOBASSIST: true
+        uses: pipeline-components/shellcheck@v0.10.0
+        with:
+          directory: ${{ inputs.files }}
+          options: --format=${{ inputs.format }}
