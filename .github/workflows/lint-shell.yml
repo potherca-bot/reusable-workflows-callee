@@ -4,7 +4,7 @@ on:
     inputs:
       # inputs.files: "**/*.sh"
       files:
-        default: **/*.sh
+        default: '**/*.sh'
         description: 'String: Files to lint'
         required: false
         type: string
