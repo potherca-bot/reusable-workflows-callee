@@ -1,0 +1,60 @@
+---
+on:
+  workflow_call:
+    # The `--config-data CONFIG_DATA` (custom configuration as YAML source) is not supported
+    inputs:
+      # inputs.config-file:
+      config-file:
+        default: .yamllint
+        description: '(String) Path to configuration file'
+        required: false
+        type: string
+      # inputs.directory: .
+      directory:
+        default: .
+        description: '(String) Directory to lint'
+        required: false
+        type: string
+      # inputs.output-format: github
+      output-format:
+        default: github
+        description: '(String) Format for parsing output'
+        required: false
+        type: string
+      # inputs.strict: false
+      strict:
+        default: false
+        description: '(Boolean) Return a non-zero exit code only for errors (false) or also for warnings (true)'
+        required: false
+        type: boolean
+
+jobs:
+  lint-yaml:
+    env:
+      ACTION_COMMAND: yamllint --format ${{ inputs.output-format }} --config-file ${{ inputs.config-file }}
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v3
+
+      # Grab default config if local config does not exist
+      # YAMLLint will look for `.yamllint`, `.yamllint.yaml` or `.yamllint.yml` in the current working directory
+      - if: hashFiles( '.yamllint', '.yamllint.yaml', '.yamllint.yml' ) == ''
+        name: Fetch default config
+        run: >
+          wget
+          ${{ github.server_url }}/${{github.repository_owner}}/reusable-workflows-callee/raw/main/config/yamllint.yml
+          -O ${{ inputs.config-file }}
+
+      - if: ${{ inputs.strict }}
+        name: --strict
+        run: echo "ACTION_COMMAND=${{ env.ACTION_COMMAND }} --strict" >> $GITHUB_ENV
+
+      - if: ! ${{ inputs.strict }}
+        name: --no-warnings
+        run: echo "ACTION_COMMAND=${{ env.ACTION_COMMAND }} --no-warnings" >> $GITHUB_ENV
+
+      - name: Lint YAML files
+        uses: pipeline-components/yamllint@master
+        with:
+          args: ${{ env.ACTION_COMMAND }}
+          directory: ${{ inputs.directory }}

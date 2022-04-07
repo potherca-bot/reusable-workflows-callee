@@ -1,0 +1,16 @@
+---
+# Config for YAML Lint, extends the less strict preset
+# To see the difference with the more strict default, see:
+3 https://gist.github.com/Potherca/a6fddd7aaace4cdd8b62f6881eca8998
+extends: relaxed
+
+rules:
+  # The default is set to 80 characters, but we want to allow a bit more space.
+  # Longer commands can be broken across multiple lines by using a literal or
+  # folded block. This is done by using the '|' or '>' character, respectively.
+  # See: https://yaml-multiline.info/.
+  line-length:
+    level: warning
+    max: 120
+
+  truthy: {allowed-values: ["true", "false", "on"]}
